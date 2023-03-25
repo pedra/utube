@@ -1,0 +1,16 @@
+body.dark {
+    background-color: #000;
+    color: #ffffff;
+}
+
+body.dark .glr-item {
+    box-shadow: 0 0 60px #ffffff40;
+}
+
+body.dark .glr-item:hover {
+    box-shadow: 0 15px 120px 40px rgba(255, 255, 255, 0.5);
+}
+
+body.dark .glr-item:hover .glr-content {
+    box-shadow: 0 15px 120px 40px rgba(255, 255, 255, 0.5);
+}
