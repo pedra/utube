@@ -1,1 +1,0 @@
-sftp -i "C:/Users/paulo/.ssh/Lunazu.pem" ubuntu@54.158.168.111
