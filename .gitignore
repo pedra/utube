@@ -108,3 +108,5 @@ old
 
 # User uploaded files 
 public/download/
+src/temp
+src/Notes.txt
