@@ -1,13 +1,8 @@
-let View, 
-    Page, 
-    Player,
-    SW = SWorker.init()
+let Page
 
 window.onload = () => {
-    View = new ViewClass
     
     Page = new PageClass
-    Page.init()
+    //Page.init()
 
-    Player = new PlayerClass
 }

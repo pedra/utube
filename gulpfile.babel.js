@@ -18,7 +18,12 @@
 
 'use strict'
 
-//import { exec, spawn } from 'child_process'
+//import del from 'del'
+// import uglifyes from 'uglify-es'
+// import composer from 'gulp-uglify/composer'
+//const uglify = composer(uglifyes, console)
+
+import { exec, spawn } from 'child_process'
 import { gulp, series, parallel, src, dest } from 'gulp'
 import babel from 'gulp-babel'
 import gulpif from 'gulp-if'
@@ -29,14 +34,11 @@ import header from 'gulp-header'
 import yargs from 'yargs'
 import streamqueue from 'streamqueue'
 import javascriptObfuscator from 'gulp-javascript-obfuscator'
-// import uglifyes from 'uglify-es'
-// import composer from 'gulp-uglify/composer'
 import uglify from 'gulp-uglify'
-//import path from 'path'
-//import del from 'del'
+import path from 'path'
 import imagemin from 'gulp-imagemin'
 
-//const uglify = composer(uglifyes, console)
+const public_dir = path.resolve(__dirname, 'public')
 const argv = yargs.argv
 
 // args
@@ -57,7 +59,7 @@ console.log(
 const image = () =>
 	src(['src/media/**/*'])
 		.pipe(imagemin({ verbose: false }))
-		.pipe(dest('public/media'))
+		.pipe(dest(public_dir + '/media'))
 
 // HTML  ------------------------------------------------------------------------------------------
 const html_compress = (files, output, destination = false) =>
@@ -73,7 +75,7 @@ const html_compress = (files, output, destination = false) =>
 				}),
 			),
 		)
-		.pipe(dest(destination ? destination : 'public'))
+		.pipe(dest(destination ? destination : public_dir))
 
 const html = () => {
 	return html_compress(
@@ -85,7 +87,7 @@ const html = () => {
 			//`src/page/template/html/inc/footer.html`, //${PRO ? '' : '_dev'}.html` // carrega os js - quando cirar um novo adicionar nesse arquivo
 		],
 		'index.html',
-		'public',
+		public_dir,
 	)
 }
 
@@ -98,7 +100,7 @@ const css = () =>
 		src([
 			'src/css/font.css',
 			'src/css/vars.css',
-			//'src/css/reset.css',
+			'src/css/utils.css',
 			'src/css/shop.css',
 			'src/css/stage.css',
 			'src/css/player.css',
@@ -115,7 +117,7 @@ const css = () =>
 	)
 		.pipe(concat('style.css'))
 		.pipe(gulpif(PRO, minifyCSS({ level: { 1: { specialComments: 0 } } })))
-		.pipe(dest('public'))
+		.pipe(dest(public_dir))
 
 /*
 
@@ -180,7 +182,7 @@ const lib_modules = () =>
 const lib = (cb) =>
 	src(['src/temp/lib/modules.js', 'src/temp/lib/lib_temp.js'])
 		.pipe(concat('lib.js'))
-		.pipe(dest('public'))
+		.pipe(dest(public_dir))
 
 // App
 const js = () =>
@@ -201,7 +203,7 @@ const js = () =>
 				javascriptObfuscator({ compact: true, sourceMap: false }),
 			),
 		)
-		.pipe(dest('public'))
+		.pipe(dest(public_dir))
 
 // SERVICE WORKER  ------------------------------------------------------------------------------------------
 const sw = () => {
@@ -223,11 +225,23 @@ const sw = () => {
 				javascriptObfuscator({ compact: true, sourceMap: false }),
 			),
 		)
-		.pipe(dest('public'))
+		.pipe(dest(public_dir))
+}
+
+const upload = c => {
+	let destination = 'lunazu:/var/www/' + (PRO ? 'wee2.trade/' : 'freedomee.org/front/')	
+		
+	exec(`scp ./public/*.js ./public/*.css ./public/*.html ${destination}`, (error, stdout, stderr) => { 
+		if(error) console.log(`exec error: ${error}`)
+		if(stdout) console.log(`stdout: ${stdout}`)
+		if(stderr) console.log(`stderr: ${stderr}`)
+	})
+
+	return c()
 }
 
 // Default ------
-exports.default = parallel(html, css, sw, js)
+exports.default = series(parallel(html, css, sw, js), upload)
 
 // CSS ------
 exports.css = css
@@ -250,3 +264,6 @@ exports.lib = series(parallel(prelib, lib_modules), lib)
 
 exports.image = image
 exports.sw = sw
+
+// Send to server...
+exports.upload = upload

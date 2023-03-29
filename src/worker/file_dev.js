@@ -9,6 +9,8 @@ const FILES = [
 	'/icon/safari-pinned-tab.svg',
 	'/icon/mstile-150x150.png',
 	'/favicon.ico',
+	
+	'/img/l1.gif',
 
 	'/style.css',
 	'/lib.js',

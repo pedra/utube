@@ -1,0 +1,22 @@
+.pulse {
+    animation: pulse 1s ease-in;
+    animation-iteration-count: infinite;
+    transition: .6s;
+    opacity: 0;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(.5);
+    }
+
+    10%,
+    90% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.4);
+    }
+}

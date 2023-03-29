@@ -191,6 +191,7 @@ self.addEventListener('notificationclick', (event) => {
 // SYNC -----------------------------------------------------------------------------
 // https://learn.microsoft.com/pt-br/microsoft-edge/progressive-web-apps-chromium/how-to/background-syncs#use-the-periodic-background-sync-api-to-regularly-get-fresh-content
 self.addEventListener('periodicsync', (event) => {
+	console.log('Periodic Sync',  event)
 	if (event.tag === 'get-daily-news') {
 		event.waitUntil(getDailyNewsInCache())
 	}

@@ -33,6 +33,7 @@
     font-weight: bold;
     color: lime;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .stg-title {
@@ -100,7 +101,7 @@
 /* MEDIA QUERY --- */
 @media screen and (max-width: 767px) {
     .stage {
-        height: 60vh;        
+        height: 100vh;        
         padding: 0 1rem 8rem 1rem;
     }
 
@@ -121,8 +122,13 @@
         font-size: 5rem;
     }
     
-    .stg-info {
-        
+    .stg-media {
+        right: 0;
+    }
+
+    .stg-description {
+        max-height: 114px;
+        overflow: hidden auto;
     }
 }
 
@@ -134,6 +140,7 @@
     .stg-title {
         font-size: 2rem;
         line-height: .8;
+        max-width: 50%;
     }
 
     .stg-play-button {

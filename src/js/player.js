@@ -4,11 +4,11 @@ class PlayerClass {
     video = null
     
 
-    build (id) { console.log('Player.build', id)
+    build (id, stopped) {
         var i = Page.videos.findIndex(a => a.videoId == id)
         if(i == -1) return Page.report(id)        
 
-        View.buildPlayer(Page.videos[i])
+        View.buildPlayer(Page.videos[i], stopped)
         this.mount (id, __(View.video))
     }
 
@@ -72,3 +72,5 @@ class PlayerClass {
         //console.log('State change', e.data)
     }
 }
+
+const Player = new PlayerClass

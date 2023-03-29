@@ -1,17 +1,66 @@
 class PageClass {
     videos = []
+    video = 'jg4drWqu9l4'
     channel = {}
     page = 'home'
+    path = ''
+    data = ''
     pages = {
-        home:  (id, force) => Page.build(id, force),
-        player: (id, force) => Player.build(id, force)
+        home: (d, e) => Page.build(d, e),
+        player: (d, e) => Player.build(d, e)
+    }
+
+    link = [
+        { url: '', page: 'home', title: 'Freedomee' },
+        { url: 'v', page: 'player', title: 'Freedomee' }
+    ]
+
+    constructor() {
+        var a = location.pathname.split('/').slice(1)
+        var u = a.shift()
+        var d = a.shift()
+        var l = this.searchLink(u, 'url')
+        this.page = 'home'//l.page
+
+        var t = { url: '', page: 'root', title: 'Freedomee' }
+        history.pushState(t, t.title, t.url)
+        history.pushState(t, t.title, t.url)
+
+        this.init().then(i => {
+            View.chPage(this.page)
+            setTimeout(() => View.buildShop(this.videos), 10)            
+            this.pages[this.page](d, true)
+
+            navigation.onnavigate = this.navigate
+        })
+    }
+
+    navigate(e) { //return false
+        e.preventDefault()
+        let a = e.destination.url.replace(location.origin, '').replace('/', '').split('/')
+        var u = a.shift()
+        var d = a.shift()
+        var l = Page.searchLink(u, 'url')
+
+        Page.page = l.page
+        View.chPage(Page.page)
+        Page.pages[l.page](d, true)
+    }
+
+    searchLink(n, i = 'page') {
+        var i = this.link.findIndex(a => a[i] === n)
+        if(i == -1){
+            i = 0
+            history.replaceState(this.link[0], this.link[0].title, this.link[0].url)            
+        }
+        return this.link[i]
     }
 
     async init() {
-        var t = await localStorage.getItem('theme')
+        var t = localStorage.getItem('theme')
         this.theme(!t || t == null ? 'light' : t)
 
-        var v = await localStorage.getItem('videos')
+        var v = localStorage.getItem('videos')
 
         if (!v || v == null) {
             let r = await fetch('https://a.freedomee.org/ytb', {
@@ -19,7 +68,7 @@ class PageClass {
             })
             r = await r.json()
             if (!r.error && r.data.videos) {
-                await localStorage.setItem('videos', JSON.stringify(r.data))
+                localStorage.setItem('videos', JSON.stringify(r.data))
                 this.videos = r.data.videos
                 this.channel = r.data.channel
             }
@@ -28,20 +77,19 @@ class PageClass {
             this.videos = v.videos
             this.channel = v.channel
         }
-
-        // Montando a página Home
-        this.go('home', 0, true)
         return this
     }
 
-    go(p, id, force = false) {
-        View.chPage(p)
-        this.pages[p](id, force)
+    go(p, data) {
+        var l = this.searchLink(p, 'page')
+        this.page = l.page
+        View.chPage(this.page)
+        this.pages[l.page](data)
     }
 
-    build (id, force) {
-        View.buildStage(this.videos)
-        if(force) setTimeout(() => View.buildShop(this.videos), 10)
+    build(video = false, force = false) {
+        View.buildStage(this.videos, video || this.video)
+        if (force) setTimeout(() => View.buildShop(this.videos), 10)
     }
 
     theme(v) {
@@ -52,7 +100,7 @@ class PageClass {
         localStorage.setItem('theme', h)
     }
 
-    report (msg) {
+    report(msg) {
         console.log('REPORT', msg)
     }
 }

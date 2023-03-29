@@ -38,24 +38,24 @@ class ViewClass {
         __(this.btn_volume_on).classList[!m ? 'remove' : 'add']('off')
     }
 
-    buildStage (videos) {        
-        var i = videos.findIndex(a => a.id == '34')
-        if(!i) __('body').innerHTML = '<div class="error">Sem rede!</div>'
+    buildStage (videos, video) {        
+        var i = videos.findIndex(a => a.videoId == video)
+        if(i == -1) __('body').innerHTML = '<div class="error">Sem rede!</div>'
         var s = __(this.stage)
 
         var v = videos[i]
         var tbn = v.thumbnail
         tbn = tbn.maxres ?? (tbn.standard ?? tbn.high)
-        var d = v.description.substr(0, 100) + (v.description.length > 100 ? '...' : '')
+        var d = v.description.substr(0, 600) + (v.description.length > 600 ? '...' : '')
 
         s.innerHTML = `<div class="stg-media" id="stg-${v.id}">
             <img src="${tbn.url}" alt="${v.title}">
         </div>
         <div class="stg-title" id="stg-title">
             <h1>${v.title}</h1>
-            <div class="stg-play-button" onclick="Page.go('player', '${v.videoId}')">
+            <a href="/v/${v.videoId}" class="stg-play-button">
                 Play <span class="material-symbols-outlined stg-play">play_circle</span> now!
-            </div>
+            </a>
             <div class="stg-info">
                 <div title="views"><span class="material-symbols-outlined">visibility</span>${v.views}</div>
                 <div title="likes"><span class="material-symbols-outlined">thumb_up</span>${v.likes}</div>
@@ -78,8 +78,7 @@ class ViewClass {
                 </div>
                 <div class="glr-content">
                     <div class="glr-content-title">
-                        <span class="material-symbols-outlined"
-                            onclick="Page.go('player', '${v.videoId}')">play_circle</span>
+                        <a href="/v/${v.videoId}"><span class="material-symbols-outlined">play_circle</span></a>
                         <h2>${v.title}</h2>
                     </div>
                     <div class="glr-content-info">
@@ -105,7 +104,7 @@ class ViewClass {
             <h1>${d.title}</h1>
             <div class="stg-play-button">
                 <span class="material-symbols-outlined stg-stop" onclick="Player.stop()">home</span>
-                <span class="material-symbols-outlined stg-play off" onclick="Player.play()">play_circle</span>
+                <span class="material-symbols-outlined stg-play pulse off" onclick="Player.play()">play_circle</span>
                 <span class="material-symbols-outlined stg-pause" onclick="Player.pause()">pause_circle</span>
                 <span class="material-symbols-outlined stg-volume-off off" onclick="Player.unmute()">volume_off</span>
                 <span class="material-symbols-outlined stg-volume-on" onclick="Player.mute()">volume_mute</span>
@@ -121,5 +120,6 @@ class ViewClass {
         </div>`
         return this
     }
-
 }
+
+const View = new ViewClass

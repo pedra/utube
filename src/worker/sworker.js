@@ -2,7 +2,9 @@ class ClassServiceWorker {
 	pushdata = []
 	SW = null
 
-	constructor() {}
+	constructor() {
+		this.init()
+	}
 
 	async init() {
 		// Instalando o Service Worker
@@ -17,11 +19,9 @@ class ClassServiceWorker {
 				{ scope: './' },
 			)
 			this.SW = sw
-
-			return this.SW //.then(sw => (this.SW = sw))
+			return this.SW
 		} else {
-			report('Seu navegador não suporta essa aplicação.')
-			return false
+			console.error('Service Worker unsupported!')
 		}
 	}
 }
