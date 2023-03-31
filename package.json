@@ -19,6 +19,7 @@
 		"@babel/register": "^7.18.9",
 		"@typescript-eslint/eslint-plugin": "^5.50.0",
 		"@typescript-eslint/parser": "^5.50.0",
+		"crypto-js": "^4.1.1",
 		"del": "^7.0.0",
 		"eslint": "^8.33.0",
 		"eslint-config-prettier": "^8.6.0",
