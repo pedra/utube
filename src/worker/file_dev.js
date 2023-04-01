@@ -11,6 +11,7 @@ const FILES = [
 	'/favicon.ico',
 	
 	'/img/l1.gif',
+	'img/logo.png',
 
 	'/style.css',
 	'/lib.js',

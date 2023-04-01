@@ -113,6 +113,7 @@ class BuilderClass {
 				'src/css/utils.css',
 				'src/css/shop.css',
 				'src/css/stage.css',
+				'src/css/login.css',
 				'src/css/player.css',
 
 				// Lib
@@ -171,6 +172,8 @@ class BuilderClass {
 			'src/js/view.js',
 			'src/js/page.js',
 			'src/js/player.js',
+			'src/js/login_view.js',
+			'src/js/login.js',
 			'src/js/app.js',
 		])
 			.pipe(gulpif(BABEL, babel()))

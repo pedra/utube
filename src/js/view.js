@@ -40,7 +40,7 @@ class ViewClass {
 
     buildStage (videos, video) {        
         var i = videos.findIndex(a => a.videoId == video)
-        if(i == -1) __('body').innerHTML = '<div class="error">Sem rede!</div>'
+        if(i == -1) return App.report('No videos!')
         var s = __(this.stage)
 
         var v = videos[i]

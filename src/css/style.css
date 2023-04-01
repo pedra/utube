@@ -52,6 +52,15 @@ header {
     z-index: 3000;
 }
 
+header a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: .5rem;
+    text-decoration: none;
+    color: var(--text);
+}
+
 header .logo {
     height: 36px;
 }

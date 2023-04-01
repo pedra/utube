@@ -7,4 +7,9 @@
 	--font-text: 'Quicksand', sans-serif;
 	--font-title: 'Roboto Condensed', sans-serif;
 
+    --text: #ffffff;
+    --back: #000000;
+
+    --log-text: #ffffff;
+    --log-back: #000000;
 }

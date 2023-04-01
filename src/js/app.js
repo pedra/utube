@@ -14,4 +14,8 @@ window.onload = () => {
 
     Page = new PageClass()
 
+    LogView.mount()
+
+    glass(false)
+
 }

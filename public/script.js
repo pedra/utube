@@ -219,7 +219,7 @@ class ViewClass {
 
     buildStage (videos, video) {        
         var i = videos.findIndex(a => a.videoId == video)
-        if(i == -1) __('body').innerHTML = '<div class="error">Sem rede!</div>'
+        if(i == -1) return App.report('No videos!')
         var s = __(this.stage)
 
         var v = videos[i]
@@ -311,12 +311,14 @@ class PageClass {
     data = ''
     pages = {
         home: (d, e) => Page.build(d, e),
-        player: (d, e) => Player.build(d, e)
+        player: (d, e) => Player.build(d, e),
+        login: (d, e) => Login.build(d, e)
     }
 
     link = [
         { url: '', page: 'home', title: 'Freedomee' },
-        { url: 'v', page: 'player', title: 'Freedomee' }
+        { url: 'v', page: 'player', title: 'Freedomee' },
+        { url: 'login', page: 'login', title: 'Freedomee::Login' }
     ]
 
     constructor() {
@@ -336,15 +338,31 @@ class PageClass {
             this.pages[this.page](d, true)
 
             navigation.onnavigate = this.navigate
+            // Reagindo a ação do botão VOLTAR do navegador
+            window.onpopstate = this.onpopstate
         })
     }
 
+    onpopstate(e) {
+        e.preventDefault()
+        console.log('POP', history.state, e.state)
+        if(e.state == null) return 
+
+        history.replaceState({p: 'login'}, '', '/')
+    }
+
     navigate(e) { //return false
+        console.log('navigate', e.destination.url)
         e.preventDefault()
         let a = e.destination.url.replace(location.origin, '').replace('/', '').split('/')
         var u = a.shift()
         var d = a.shift()
         var l = Page.searchLink(u, 'url')
+
+        if(l.page == 'login') {
+            Page.pages['login']()
+            return false
+        }
 
         Page.page = l.page
         View.chPage(Page.page)
@@ -411,8 +429,7 @@ class PageClass {
 class PlayerClass {
 
     id = null
-    video = null
-    
+    video = null    
 
     build (id, stopped) {
         var i = Page.videos.findIndex(a => a.videoId == id)
@@ -484,6 +501,96 @@ class PlayerClass {
 }
 
 const Player = new PlayerClass
+
+class LoginViewClass {
+
+    htmlId = '#login'
+    loginId = '#log-form'
+    logEmail = '#log-email'
+    logPassw = '#log-passw'
+    logCheck = '#log-check'
+
+    constructor () {
+        
+    }
+
+    mount () {
+        __(this.htmlId).innerHTML = 
+        `<div class="log-login" id="log-form">
+            <form class="log-form">
+                <div class="form-group">
+                    <label for="log-email">Email address</label>
+                    <input type="email" id="log-email" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="log-passw" placeholder="Password">
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" id="log-check">
+                    <label for="log-check">I agree to the terms of service.</label>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Sign in</button>
+                </div>
+            </form>
+        </div>`
+        setTimeout(() => __(this.htmlId + ' form').onsubmit = Login.submit, 10)
+    }
+
+    show () {
+        __(this.htmlId).classList.add('on')
+        setTimeout(() => __(this.loginId).classList.add('on'), 10)
+    }
+
+    hide () {
+        __(this.loginId).classList.remove('on')
+        setTimeout(() => __(this.htmlId).classList.remove('on'), 600)
+    }
+
+    getForm () {
+        return {
+            email: __(this.logEmail).value,
+            passw: __(this.logPassw).value,
+            check: __(this.logCheck).checked
+        }
+    }
+
+    clear () {
+        __(this.logEmail).value = ''
+        __(this.logPassw).value = ''
+        __(this.logCheck).checked = false
+    }
+
+
+
+}
+
+const LogView = new LoginViewClass()
+
+class LoginClass {
+
+
+    constructor () {
+
+    }
+
+    build () {
+        LogView.show()
+    }
+
+    submit (e) {
+        e.preventDefault()
+        LogView.hide()
+        let data = LogView.getForm()
+        console.log('Login', data)
+
+        LogView.clear()
+        return false
+    }
+}
+
+const Login = new LoginClass()
 let App, Page
 
 class AppClass {
@@ -499,5 +606,9 @@ App = new AppClass()
 window.onload = () => {
 
     Page = new PageClass()
+
+    LogView.mount()
+
+    glass(false)
 
 }

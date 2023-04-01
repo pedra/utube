@@ -1,8 +1,7 @@
 class PlayerClass {
 
     id = null
-    video = null
-    
+    video = null    
 
     build (id, stopped) {
         var i = Page.videos.findIndex(a => a.videoId == id)

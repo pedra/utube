@@ -1,4 +1,4 @@
-const VERSION="1680296734256_dev";const FILES = [
+const VERSION="1680327242038_dev";const FILES = [
 	'/',
 	'/icon/site.webmanifest',
 	'/icon/favicon.ico',
@@ -11,6 +11,7 @@ const VERSION="1680296734256_dev";const FILES = [
 	'/favicon.ico',
 	
 	'/img/l1.gif',
+	'img/logo.png',
 
 	'/style.css',
 	'/lib.js',

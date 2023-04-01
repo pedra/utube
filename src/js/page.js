@@ -7,12 +7,14 @@ class PageClass {
     data = ''
     pages = {
         home: (d, e) => Page.build(d, e),
-        player: (d, e) => Player.build(d, e)
+        player: (d, e) => Player.build(d, e),
+        login: (d, e) => Login.build(d, e)
     }
 
     link = [
         { url: '', page: 'home', title: 'Freedomee' },
-        { url: 'v', page: 'player', title: 'Freedomee' }
+        { url: 'v', page: 'player', title: 'Freedomee' },
+        { url: 'login', page: 'login', title: 'Freedomee::Login' }
     ]
 
     constructor() {
@@ -32,15 +34,31 @@ class PageClass {
             this.pages[this.page](d, true)
 
             navigation.onnavigate = this.navigate
+            // Reagindo a ação do botão VOLTAR do navegador
+            window.onpopstate = this.onpopstate
         })
     }
 
+    onpopstate(e) {
+        e.preventDefault()
+        console.log('POP', history.state, e.state)
+        if(e.state == null) return 
+
+        history.replaceState({p: 'login'}, '', '/')
+    }
+
     navigate(e) { //return false
+        console.log('navigate', e.destination.url)
         e.preventDefault()
         let a = e.destination.url.replace(location.origin, '').replace('/', '').split('/')
         var u = a.shift()
         var d = a.shift()
         var l = Page.searchLink(u, 'url')
+
+        if(l.page == 'login') {
+            Page.pages['login']()
+            return false
+        }
 
         Page.page = l.page
         View.chPage(Page.page)

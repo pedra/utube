@@ -1,3 +1,8 @@
+:root {
+    --text: #ffffff;
+    --back: #000000;
+}
+
 body.dark {
     background-color: #000;
     color: #ffffff;
