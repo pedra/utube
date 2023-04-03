@@ -1,13 +1,5 @@
 class ClassConfig {
-	http = 'https://'
-	domain = 'freedomee.org'
-	base_url = this.http + this.domain
-	api_url = this.http + 'a.' + this.domain
-	static_url = this.base_url //`${this.http}s.${this.domain}`
-	mobile_url = this.base_url //`${this.http}m.${this.domain}`
-	media_url = this.static_url + '/media'
-	lang_url = this.static_url + '/lang'
-	lang_flag_url = this.media_url + '/flag'
+	lang_flag_url = APP_URL_MEDIA + '/flag'
 
 	lang_absent = '***'
 	lang = ''
@@ -45,7 +37,7 @@ class ClassConfig {
 				this.langs.includes(lang.toLowerCase()))
 		) {
 			try {
-				let l = await fetch(`${this.lang_url}/${lang}.json`)
+				let l = await fetch(`${APP_URL_LANG}/${lang}.json`)
 				this.lang_data = await l.json()
 				this.lang = lang
 				return await this.save('lang')
@@ -144,6 +136,19 @@ class ClassConfig {
 		}
 	}
 }
+
+const APP_ID = '001',
+	APP_VERSION = '0.0.1',
+    
+    APP_URL = 'https://freedomee.org',
+    //APP_URL = 'http://localhost',
+    APP_URL_MEDIA = APP_URL + '/media',
+    APP_URL_LANG = APP_URL + '/lang',
+
+    API_URL = 'https://a.freedomee.org',
+    //API_URL = 'http://localhost:3000',
+    API_URL_GATE = API_URL + '/gate',
+    API_URL_KEY = API_URL_GATE + '/key'
 
 const Config = null // = new ClassConfig()
 
@@ -502,6 +507,47 @@ class PlayerClass {
 
 const Player = new PlayerClass
 
+
+class StageClass {
+
+    constructor () {
+
+    }
+
+    htmlId = '#stage'
+
+    mount (videos, video) {        
+        var i = videos.findIndex(a => a.videoId == video)
+        if(i == -1) return App.report('No videos!')
+        var s = __(this.htmlId)
+
+        var v = videos[i]
+        var tbn = v.thumbnail
+        tbn = tbn.maxres ?? (tbn.standard ?? tbn.high)
+        var d = v.description.substr(0, 600) + (v.description.length > 600 ? '...' : '')
+
+        s.innerHTML = `<div class="stg-media" id="stg-${v.id}">
+            <img src="${tbn.url}" alt="${v.title}">
+        </div>
+        <div class="stg-title" id="stg-title">
+            <h1>${v.title}</h1>
+            <a href="/v/${v.videoId}" class="stg-play-button">
+                Play <span class="material-symbols-outlined stg-play">play_circle</span> now!
+            </a>
+            <div class="stg-info">
+                <div title="views"><span class="material-symbols-outlined">visibility</span>${v.views}</div>
+                <div title="likes"><span class="material-symbols-outlined">thumb_up</span>${v.likes}</div>
+                <div title="duration"><span
+                        class="material-symbols-outlined">schedule</span>${convTime(v.duration)[1]}</div>
+                <div title="quality" class="quality">${v.definition}</div>
+            </div>
+            <div class="stg-description">${d}</div>
+        </div>`
+    }
+}
+
+const Stage = new StageClass()
+
 class LoginViewClass {
 
     htmlId = '#login'
@@ -549,12 +595,30 @@ class LoginViewClass {
     }
 
     getForm () {
-        return {
+        let data = {
             email: __(this.logEmail).value,
             passw: __(this.logPassw).value,
             check: __(this.logCheck).checked
         }
+
+        if(data.email.length < 1) {
+            report('Email is empty!')
+            return false
+        }
+
+        if(data.passw.length < 1) {
+            report('Password is empty!')
+            return false
+        }
+
+        if(data.check == false) {
+            report('You must agree to the terms of service!')
+            return false
+        }
+
+        return data
     }
+    
 
     clear () {
         __(this.logEmail).value = ''
@@ -570,68 +634,95 @@ const LogView = new LoginViewClass()
 
 class LoginClass {
 
+    geo = ''
+    rsa = ''
+    ukey = ''
+    token = ''
 
-    constructor () {
 
+    constructor() {
+        this.getGeo()
+        this.ukey = rpass()
     }
 
-    build () {
+
+    build() {
         LogView.show()
     }
 
-    submit (e) {
+    async submit(e) {
         e.preventDefault()
-        LogView.hide()
         let data = LogView.getForm()
-        console.log('Login', data)
 
+        if (!data) return false
+
+        // RSA ...
+        await Login.getPublicKey()
+        var d = Login.rsaEncode(data)
+
+        // Send ...
+        glass(true)
+        var a = await Conn.post('gate/login', d, 'text', 'text')
+        glass(false)
+
+        if(!a) {
+            LogView.clear()
+            LogView.hide()
+            return report('Network unavailable!')            
+        }
+
+        a = Login.decodeAes(a)
+
+        if(!a) return report('Invalid login or password.')
+        report (`Welcome back ${a.first_name + ' ' + a.last_name}!`)
+
+        Login.ukey = a.ukey
+        Login.token = a.token
+        LogView.hide()
         LogView.clear()
-        return false
     }
+
+    async getPublicKey() {
+        var k = await fetch(API_URL_KEY)
+        this.rsa = await k.text()
+    }
+
+    rsaEncode(data) {
+        var d = {
+            app: APP_ID,
+            version: APP_VERSION,
+
+            login: data.email,
+            passw: data.passw,
+
+            ukey: Login.ukey,
+            geo: Login.geo
+        }
+
+        // Criptografando rsa
+        return RSA.encrypt(JSON.stringify(d), RSA.getPublicKey(Login.rsa))
+    }
+
+    decodeAes(data) {
+        var a
+        try {
+            a = JSON.parse(decrypt(data, Login.ukey))
+        } catch (e) { console.log(e)
+            a = false
+        }
+        return a
+    }
+
+    // Get Geo
+    getGeo() {
+        if (!navigator.geolocation) return false
+        navigator.geolocation.getCurrentPosition(
+            a => this.geo = a.coords.latitude + '|' + a.coords.longitude)
+    }
+
 }
 
 const Login = new LoginClass()
-
-
-class StageClass {
-
-    constructor () {
-
-    }
-
-    htmlId = '#stage'
-
-    mount (videos, video) {        
-        var i = videos.findIndex(a => a.videoId == video)
-        if(i == -1) return App.report('No videos!')
-        var s = __(this.htmlId)
-
-        var v = videos[i]
-        var tbn = v.thumbnail
-        tbn = tbn.maxres ?? (tbn.standard ?? tbn.high)
-        var d = v.description.substr(0, 600) + (v.description.length > 600 ? '...' : '')
-
-        s.innerHTML = `<div class="stg-media" id="stg-${v.id}">
-            <img src="${tbn.url}" alt="${v.title}">
-        </div>
-        <div class="stg-title" id="stg-title">
-            <h1>${v.title}</h1>
-            <a href="/v/${v.videoId}" class="stg-play-button">
-                Play <span class="material-symbols-outlined stg-play">play_circle</span> now!
-            </a>
-            <div class="stg-info">
-                <div title="views"><span class="material-symbols-outlined">visibility</span>${v.views}</div>
-                <div title="likes"><span class="material-symbols-outlined">thumb_up</span>${v.likes}</div>
-                <div title="duration"><span
-                        class="material-symbols-outlined">schedule</span>${convTime(v.duration)[1]}</div>
-                <div title="quality" class="quality">${v.definition}</div>
-            </div>
-            <div class="stg-description">${d}</div>
-        </div>`
-    }
-}
-
-const Stage = new StageClass()
 
 class ShopClass {
     constructor () {
@@ -657,9 +748,6 @@ App = new AppClass()
 window.onload = () => {
 
     Page = new PageClass()
-
     LogView.mount()
-
-    glass(false)
 
 }

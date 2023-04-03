@@ -1,0 +1,73 @@
+.login {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top:  0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    background: rgba(0,0,0,0.9);
+}
+
+.log-login {
+    min-width: 320px;
+    background: var(--log-back);    
+    color: var(--log-text);
+    padding: 1rem;
+    position: relative;
+    box-shadow: 0 15px 120px 40px rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    transition: .6s cubic-bezier(0.47, -1.2, 0.46, 2.16);
+    transform: scale(0);
+}
+
+.login.on {
+    display: flex;
+}
+
+.log-login.on {
+    opacity: 1;
+    transform: none;
+}
+
+log-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.form-group.form-check {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .5rem;
+}
+
+.form-group input,
+.form-group button {
+    padding: .8rem;
+    border-radius: 2rem;
+    border: none;
+}
+
+.form-group label {
+    font-size: .8rem;
+    margin: 0 0 .3rem 0;
+}
+
+.form-group button {
+    background-image: linear-gradient(to top, #031e81, #6072ff);    
+    color: var(--log-text);
+    margin: .5rem 0;
+    cursor: pointer;
+}

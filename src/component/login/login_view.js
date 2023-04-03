@@ -46,12 +46,30 @@ class LoginViewClass {
     }
 
     getForm () {
-        return {
+        let data = {
             email: __(this.logEmail).value,
             passw: __(this.logPassw).value,
             check: __(this.logCheck).checked
         }
+
+        if(data.email.length < 1) {
+            report('Email is empty!')
+            return false
+        }
+
+        if(data.passw.length < 1) {
+            report('Password is empty!')
+            return false
+        }
+
+        if(data.check == false) {
+            report('You must agree to the terms of service!')
+            return false
+        }
+
+        return data
     }
+    
 
     clear () {
         __(this.logEmail).value = ''

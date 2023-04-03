@@ -1,13 +1,5 @@
 class ClassConfig {
-	http = 'https://'
-	domain = 'freedomee.org'
-	base_url = this.http + this.domain
-	api_url = this.http + 'a.' + this.domain
-	static_url = this.base_url //`${this.http}s.${this.domain}`
-	mobile_url = this.base_url //`${this.http}m.${this.domain}`
-	media_url = this.static_url + '/media'
-	lang_url = this.static_url + '/lang'
-	lang_flag_url = this.media_url + '/flag'
+	lang_flag_url = APP_URL_MEDIA + '/flag'
 
 	lang_absent = '***'
 	lang = ''
@@ -45,7 +37,7 @@ class ClassConfig {
 				this.langs.includes(lang.toLowerCase()))
 		) {
 			try {
-				let l = await fetch(`${this.lang_url}/${lang}.json`)
+				let l = await fetch(`${APP_URL_LANG}/${lang}.json`)
 				this.lang_data = await l.json()
 				this.lang = lang
 				return await this.save('lang')
@@ -144,5 +136,18 @@ class ClassConfig {
 		}
 	}
 }
+
+const APP_ID = '001',
+	APP_VERSION = '0.0.1',
+    
+    APP_URL = 'https://freedomee.org',
+    //APP_URL = 'http://localhost',
+    APP_URL_MEDIA = APP_URL + '/media',
+    APP_URL_LANG = APP_URL + '/lang',
+
+    API_URL = 'https://a.freedomee.org',
+    //API_URL = 'http://localhost:3000',
+    API_URL_GATE = API_URL + '/gate',
+    API_URL_KEY = API_URL_GATE + '/key'
 
 const Config = null // = new ClassConfig()

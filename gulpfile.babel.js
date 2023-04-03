@@ -232,21 +232,13 @@ let CSS_init = [
 	'src/css/font.css',
 	'src/css/vars.css',
 	'src/css/utils.css',
-	//'src/css/shop.css',
-	//'src/css/stage.css',
-	'src/css/login.css',
-	'src/css/player.css',
-
-	// Lib
-	'node_modules/cropperjs/dist/cropper.min.css'
+	'src/css/player.css',	
+	'node_modules/cropperjs/dist/cropper.min.css' // Lib
 ],
 	CSS = [],
-	CSS_final = [
-		// Default theme ...
-		'src/css/theme/dark.css',
-
-		// Template (global style)
-		'src/css/style.css',
+	CSS_final = [		
+		'src/css/theme/dark.css', // Default theme ...		
+		'src/css/style.css', // Template (global style)
 	]
 
 // JS   --------------------------------------- config
@@ -258,11 +250,9 @@ let JS_init = [
 		'src/js/view.js',
 		'src/js/page.js',
 		'src/js/player.js',
-		'src/js/login_view.js',
-		'src/js/login.js'
 	],
 	JS_final = [
-		'src/js/app.js',
+		'src/js/app.js'
 	]
 
 // IMG  --------------------------------------- config
@@ -271,7 +261,7 @@ let IMG = ['src/media/**/*']
 exports.add = add
 
 // Default ------
-exports.default = series(add, parallel(html, css, sw, js), upload)
+exports.default = series(add, parallel(html, css, sw, js))//, upload)
 
 // CSS ------
 exports.css = series(add, css)
