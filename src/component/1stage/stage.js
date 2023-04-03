@@ -2,6 +2,10 @@
 
 class StageClass {
 
+    constructor () {
+
+    }
+
     htmlId = '#stage'
 
     mount (videos, video) {        

@@ -127,8 +127,8 @@
     }
 
     .stg-description {
-        max-height: 114px;
-        overflow: hidden auto;
+        /* max-height: 114px;
+        overflow: hidden auto; */
     }
 }
 
