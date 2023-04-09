@@ -137,18 +137,25 @@ class ClassConfig {
 	}
 }
 
-const APP_ID = '001',
-	APP_VERSION = '0.0.1',
-    
-    APP_URL = 'https://freedomee.org',
-    //APP_URL = 'http://localhost',
+const APP = {
+		id: '001',
+		version: '0.0.1',
+		token: '',
+		key: '',
+		geo: '',
+		rsa: ''
+	},
+
+    //APP_URL = 'https://freedomee.org',
+    APP_URL = 'http://localhost',
     APP_URL_MEDIA = APP_URL + '/media',
     APP_URL_LANG = APP_URL + '/lang',
 
-    API_URL = 'https://a.freedomee.org',
-    //API_URL = 'http://localhost:3000',
-    API_URL_GATE = API_URL + '/gate',
-    API_URL_KEY = API_URL_GATE + '/key'
+    //API_URL = 'https://a.freedomee.org',
+    API_URL = 'http://localhost:3000',
+    API_URL_GATE = 'gate',
+    API_URL_KEY = 'gate/key'
+	
 
 const Config = null // = new ClassConfig()
 
@@ -634,15 +641,9 @@ const LogView = new LoginViewClass()
 
 class LoginClass {
 
-    geo = ''
-    rsa = ''
-    ukey = ''
-    token = ''
-
-
     constructor() {
         this.getGeo()
-        this.ukey = rpass()
+        APP.key = rpass()
     }
 
 
@@ -676,37 +677,35 @@ class LoginClass {
         if(!a) return report('Invalid login or password.')
         report (`Welcome back ${a.first_name + ' ' + a.last_name}!`)
 
-        Login.ukey = a.ukey
-        Login.token = a.token
+        APP.key = a.key
+        APP.token = a.token
         LogView.hide()
         LogView.clear()
     }
 
     async getPublicKey() {
-        var k = await fetch(API_URL_KEY)
-        this.rsa = await k.text()
+        APP.rsa = await Conn.get(API_URL_KEY, false, 'text')
     }
 
     rsaEncode(data) {
         var d = {
-            app: APP_ID,
-            version: APP_VERSION,
+            app: APP.id,
+            version: APP.version,
+            key: APP.key,
+            geo: APP.geo,
 
             login: data.email,
-            passw: data.passw,
-
-            ukey: Login.ukey,
-            geo: Login.geo
+            passw: data.passw            
         }
 
         // Criptografando rsa
-        return RSA.encrypt(JSON.stringify(d), RSA.getPublicKey(Login.rsa))
+        return RSA.encrypt(JSON.stringify(d), RSA.getPublicKey(APP.rsa))
     }
 
     decodeAes(data) {
         var a
         try {
-            a = JSON.parse(decrypt(data, Login.ukey))
+            a = JSON.parse(decrypt(data, APP.key))
         } catch (e) { console.log(e)
             a = false
         }
@@ -717,7 +716,7 @@ class LoginClass {
     getGeo() {
         if (!navigator.geolocation) return false
         navigator.geolocation.getCurrentPosition(
-            a => this.geo = a.coords.latitude + '|' + a.coords.longitude)
+            a => APP.geo = a.coords.latitude + '|' + a.coords.longitude)
     }
 
 }

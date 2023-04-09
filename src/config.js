@@ -137,17 +137,24 @@ class ClassConfig {
 	}
 }
 
-const APP_ID = '001',
-	APP_VERSION = '0.0.1',
-    
-    APP_URL = 'https://freedomee.org',
-    //APP_URL = 'http://localhost',
+const APP = {
+		id: '001',
+		version: '0.0.1',
+		token: '',
+		key: '',
+		geo: '',
+		rsa: ''
+	},
+
+    //APP_URL = 'https://freedomee.org',
+    APP_URL = 'http://localhost',
     APP_URL_MEDIA = APP_URL + '/media',
     APP_URL_LANG = APP_URL + '/lang',
 
-    API_URL = 'https://a.freedomee.org',
-    //API_URL = 'http://localhost:3000',
-    API_URL_GATE = API_URL + '/gate',
-    API_URL_KEY = API_URL_GATE + '/key'
+    //API_URL = 'https://a.freedomee.org',
+    API_URL = 'http://localhost:3000',
+    API_URL_GATE = 'gate',
+    API_URL_KEY = 'gate/key'
+	
 
 const Config = null // = new ClassConfig()
