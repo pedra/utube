@@ -76,9 +76,10 @@ self.addEventListener('fetch', (event) => {
 								)
 									return response
 								if (
-									url.includes('/media/img/') ||
+									(url.includes('/media/img/') ||
 									url.includes('/media/page/') ||
-                                    url.includes('https://i.ytimg.com/vi/')
+                                    url.includes('https://i.ytimg.com/vi/')) &&
+									!(url.includes('https://www.youtube.com/iframe_api'))
 								)
 									cache.put(event.request, response.clone())
 								return response

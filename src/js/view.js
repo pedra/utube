@@ -74,7 +74,7 @@ class ViewClass {
             var d = v.description.substr(0, 100) + (v.description.length > 100 ? '...' : '')
             var h = `<div class="glr-item" id="v-${v.id}">
                 <div class="glr-media">
-                    <img src="${v.thumbnail.high.url}" alt="${v.title}">
+                    <img loading="lazy" src="${v.thumbnail.high.url}" alt="${v.title}">
                 </div>
                 <div class="glr-content">
                     <div class="glr-content-title">

@@ -261,7 +261,7 @@ let IMG = ['src/media/**/*']
 exports.add = add
 
 // Default ------
-exports.default = series(add, parallel(html, css, sw, js))//, upload)
+exports.default = series(add, parallel(html, css, sw, js), upload)
 
 // CSS ------
 exports.css = series(add, css)

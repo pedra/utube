@@ -147,12 +147,13 @@ const APP = {
 	},
 
     //APP_URL = 'https://freedomee.org',
-    APP_URL = 'http://localhost',
+    APP_URL = 'https://wee2.trade',
+    //APP_URL = 'http://localhost',
     APP_URL_MEDIA = APP_URL + '/media',
     APP_URL_LANG = APP_URL + '/lang',
 
-    //API_URL = 'https://a.freedomee.org',
-    API_URL = 'http://localhost:3000',
+    API_URL = 'https://a.freedomee.org',
+    //API_URL = 'http://localhost:3000',
     API_URL_GATE = 'gate',
     API_URL_KEY = 'gate/key'
 	
